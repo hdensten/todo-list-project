@@ -4,6 +4,7 @@ import TodoItem from "./TodoItem";
 class App extends React.Component {
   constructor() {
     super();
+
     this.state = {
       todos: [],
       todo: ""
@@ -11,9 +12,9 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("https://localhost:5000")
+    fetch("http://localhost:5000/todos")
       .then(response => response.json())
-      .then(data => console.log(data));
+      .then(data => this.setState({ todos: data }));
   }
 
   renderTodos = () => {
@@ -26,9 +27,19 @@ class App extends React.Component {
   };
   addTodo = event => {
     event.preventDefault();
-    this.setState({
-      todos: [...this.state.todos, this.state.todo]
-    });
+    fetch("http://localhost:5000/todo", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        title: this.state.todo,
+        done: false
+      })
+    }).then(
+      this.setState({
+        todos: [...this.state.todos, this.state.todo],
+        todo: ""
+      })
+    );
   };
 
   render() {

@@ -35,7 +35,7 @@ class App extends React.Component {
   };
   addTodo = event => {
     event.preventDefault();
-    fetch("https://murmuring-plateau-50795.herokuapp.com/todo", {
+    fetch("https://murmuring-plateau-50795.herokuapp.com/todos", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({

@@ -12,14 +12,22 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:5000/todos")
+    fetch("https://murmuring-plateau-50795.herokuapp.com/todos")
       .then(response => response.json())
       .then(data => this.setState({ todos: data }));
   }
 
   renderTodos = () => {
     return this.state.todos.map(todo => {
-      return <TodoItem title={todo} />;
+      return (
+        <TodoItem
+          key={todo.id}
+          title={todo.title}
+          done={todo.done}
+          id={todo.id}
+          delete={this.deleteTodo}
+        />
+      );
     });
   };
   handleChange = event => {
@@ -27,17 +35,29 @@ class App extends React.Component {
   };
   addTodo = event => {
     event.preventDefault();
-    fetch("http://localhost:5000/todo", {
+    fetch("https://murmuring-plateau-50795.herokuapp.com/todo", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         title: this.state.todo,
         done: false
       })
+    })
+      .then(response => response.json())
+      .then(data =>
+        this.setState({
+          todos: [...this.state.todos, data],
+          todo: ""
+        })
+      );
+  };
+
+  deleteTodo = id => {
+    fetch(`https://murmuring-plateau-50795.herokuapp.com/todo/${id}`, {
+      method: "DELETE"
     }).then(
       this.setState({
-        todos: [...this.state.todos, this.state.todo],
-        todo: ""
+        todos: this.state.todos.filter(todo => todo.id !== id)
       })
     );
   };

@@ -1,21 +1,37 @@
 import React from "react";
 class TodoItem extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      done: false
+      done: props.done
     };
   }
+
+  toggleDone = () => {
+    fetch(
+      `https://murmuring-plateau-50795.herokuapp.com/todo/${this.props.id}`,
+      {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title: this.props.title,
+          done: !this.state.done
+        })
+      }
+    ).then(this.setState({ done: !this.state.done }));
+  };
 
   render() {
     return (
       <div className="todo-item">
         <input
           type="checkbox"
-          onChange={() => this.setState({ done: !this.state.done })}
+          onChange={this.toggleDone}
+          defaultChecked={this.state.done}
         />
         <p className={this.state.done && "done"}>{this.props.title}</p>
+        <button onClick={() => this.props.delete(this.props.id)}>X</button>
       </div>
     );
   }

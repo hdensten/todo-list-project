@@ -12,9 +12,15 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("https://murmuring-plateau-50795.herokuapp.com/todos")
+    fetch("https://todo-list-870d0.firebaseio.com//todos.json")
       .then(response => response.json())
-      .then(data => this.setState({ todos: data }));
+      .then(data => {
+        const loadedTodos = [];
+        for (const id in data) {
+          loadedTodos.push({ id, ...data[id] });
+        }
+        this.setState({ todos: loadedTodos });
+      });
   }
 
   renderTodos = () => {
@@ -35,7 +41,7 @@ class App extends React.Component {
   };
   addTodo = event => {
     event.preventDefault();
-    fetch("https://murmuring-plateau-50795.herokuapp.com/todos", {
+    fetch("https://todo-list-870d0.firebaseio.com//todos.json", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -46,14 +52,17 @@ class App extends React.Component {
       .then(response => response.json())
       .then(data =>
         this.setState({
-          todos: [...this.state.todos, data],
+          todos: [
+            ...this.state.todos,
+            { id: data.name, title: this.state.todo, done: false }
+          ],
           todo: ""
         })
       );
   };
 
   deleteTodo = id => {
-    fetch(`https://murmuring-plateau-50795.herokuapp.com/todo/${id}`, {
+    fetch(`https://todo-list-870d0.firebaseio.com//todos/${id}.json`, {
       method: "DELETE"
     }).then(
       this.setState({
